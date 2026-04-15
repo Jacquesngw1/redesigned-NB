@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install deps first
+COPY backend/package*.json ./backend/
+RUN cd backend && npm ci
+
+# Copy source
+COPY backend ./backend
+
+# Build
+RUN cd backend && npx prisma generate
+RUN cd backend && npm run build
+
+EXPOSE 3001
+CMD ["sh", "-c", "cd backend && npm run start"]
